@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huawei Pura 80 Ultra 3D</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #050505;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background-color: #111;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 18px;
+            letter-spacing: 2px;
+            font-weight: 300;
+            border-bottom: 1px solid #222;
+            z-index: 10;
+        }
+        .header span {
+            color: #ff3366;
+            font-weight: bold;
+        }
+        canvas {
+            width: 100%;
+            flex-grow: 1;
+            display: block;
+        }
+    </style>
+    <!-- Cargamos Three.js de manera segura -->
+    <script src="https://cloudflare.com"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">HUAWEI <span>PURA 80 ULTRA</span> - Concepto 3D Interactivo</div>
+        <div id="canvas-container" style="width: 100%; height: 100%;"></div>
+    </div>
+
+    <script>
+        // 1. Inicialización de la Escena y Cámara
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 0, 6);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // 2. Iluminación de Estudio (Resalta reflejos metálicos y de cristal)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        mainLight.position.set(5, 5, 5);
+        scene.add(mainLight);
+
+        const rimLight = new THREE.DirectionalLight(0xff3366, 1.2); // Reflejo premium carmín
+        rimLight.position.set(-5, -3, 3);
+        scene.add(rimLight);
+
+        const topLight = new THREE.DirectionalLight(0x3399ff, 1.0); // Reflejo azul superior
+        topLight.position.set(0, 5, -2);
+        scene.add(topLight);
+
+        // 3. CONSTRUCCIÓN DEL SMARTPHONE (Estructura de diseño Huawei Pura)
+        const phoneGroup = new THREE.Group();
+
+        // Materiales premium del dispositivo
+        const chasisMat = new THREE.MeshPhongMaterial({ color: 0x1c1c1e, roughness: 0.1, shininess: 90 });
+        const pantallaMat = new THREE.MeshPhongMaterial({ color: 0x050505, roughness: 0.0, shininess: 100 });
+        const moduloCamMat = new THREE.MeshPhongMaterial({ color: 0x2c2c2e, roughness: 0.2, shininess: 80 });
+        const lenteMat = new THREE.MeshPhongMaterial({ color: 0x000000, roughness: 0.0, shininess: 120 });
+        const cristalLenteMat = new THREE.MeshPhongMaterial({ color: 0x334455, opacity: 0.6, transparent: true, shininess: 200 });
+
+        // Cuerpo principal (Grosor ultra delgado, esquinas curvas emuladas)
+        const cuerpoGeo = new THREE.BoxGeometry(2.2, 4.5, 0.15);
+        const cuerpo = new THREE.Mesh(cuerpoGeo, chasisMat);
+        phoneGroup.add(cuerpo);
+
+        // Pantalla frontal (Ligeramente sobresaliente hacia adelante)
+        const pantallaGeo = new THREE.BoxGeometry(2.1, 4.4, 0.02);
+        const pantalla = new THREE.Mesh(pantallaGeo, pantallaMat);
+        pantalla.position.set(0, 0, 0.07);
+        phoneGroup.add(pantalla);
+
+        // Módulo de Cámaras Trasero (Diseño geométrico disruptivo e icónico de la gama Pura)
+        const moduloGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.05, 3); // Base triangular redondeada
+        const moduloCamaras = new THREE.Mesh(moduloGeo, moduloCamMat);
+        moduloCamaras.position.set(0.3, 1.3, -0.08);
+        moduloCamaras.rotation.x = Math.PI / 2;
+        moduloCamaras.rotation.y = Math.PI / 3;
+        phoneGroup.add(moduloCamaras);
+
+        // Lente Principal (Cámara XMAGE con sensor de 1 pulgada)
+        const lenteGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.02, 32);
+        const lentePrincipal = new THREE.Mesh(lenteGeo, lenteMat);
+        lentePrincipal.position.set(0.3, 1.4, -0.11);
+        lentePrincipal.rotation.x = Math.PI / 2;
+        phoneGroup.add(lentePrincipal);
+
+        const cristalGeo = new THREE.CylinderGeometry(0.20, 0.20, 0.01, 32);
+        const cristalLente = new THREE.Mesh(cristalGeo, cristalLenteMat);
+        cristalLente.position.set(0.3, 1.4, -0.12);
+        cristalLente.rotation.x = Math.PI / 2;
+        phoneGroup.add(cristalLente);
+
+        // Lente Secundario (Telefoto / Ultra Gran Angular)
+        const lenteSecGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.02, 32);
+        const lenteSec = new THREE.Mesh(lenteSecGeo, lenteMat);
+        lenteSec.position.set(0.15, 1.15, -0.11);
+        lenteSec.rotation.x = Math.PI / 2;
+        phoneGroup.add(lenteSec);
+
+        // Flash LED trasero
+        const flashGeo = new THREE.SphereGeometry(0.04, 16, 16);
+        const flashMat = new THREE.MeshBasicMaterial({ color: 0xffffee });
+        const flash = new THREE.Mesh(flashGeo, flashMat);
+        flash.position.set(0.5, 1.15, -0.10);
+        phoneGroup.add(flash);
+
+        scene.add(phoneGroup);
+
+        // 4. Interacción del Usuario y Movimiento Automático
+        let targetX = 0;
+        let targetY = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+
+        // Captura de coordenadas del ratón o deslizamiento táctil
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+            mouseY = (event.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+        });
+
+        // Soporte para pantallas táctiles (móviles/tabletas de la escuela)
+        document.addEventListener('touchmove', (event) => {
+            if(event.touches.length > 0) {
+                mouseX = (event.touches[0].clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+                mouseY = (event.touches[0].clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+            }
+        });
+
+        // 5. Bucle de Renderizado y Animación Constante
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Giro automático suave combinado con el movimiento del ratón
+            const tiempo = Date.now() * 0.001;
+            
+            // Si el usuario no mueve el mouse, el teléfono rota elegantemente solo
+            targetX = mouseX * 2.5;
+            targetY = mouseY * 1.5;
+
+            // Transición fluida (Damping)
+            phoneGroup.rotation.y += (targetX - phoneGroup.rotation.y) * 0.05;
+            phoneGroup.rotation.x += (targetY - phoneGroup.rotation.x) * 0.05;
+            
+            // Añade un balanceo sutil flotante por defecto
+            if (mouseX === 0 && mouseY === 0) {
+                phoneGroup.rotation.y = Math.sin(tiempo * 0.5) * 2.0; // Da la vuelta completa para ver el módulo de cámaras
+                phoneGroup.rotation.z = Math.cos(tiempo * 0.3) * 0.1;
+            }
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Ajuste fluido al redimensionar pantallas
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
